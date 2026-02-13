@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type Framework = 
@@ -38,6 +38,8 @@ export function PromptWizard() {
   ]);
   const [usePageObjects, setUsePageObjects] = useState(true);
   const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
+  const [selectors, setSelectors] = useState("");
+  const [testData, setTestData] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
 
@@ -70,6 +72,18 @@ ${description ? `**Description**: ${description}` : ""}
 ### Steps to Automate:
 ${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Verify: ${s.expected})` : ""}`).join("\n")}
 
+${selectors ? `### Element Selectors Reference:
+\`\`\`json
+${selectors}
+\`\`\`
+` : ""}
+
+${testData ? `### Test Data:
+\`\`\`
+${testData}
+\`\`\`
+` : ""}
+
 ## Requirements:
 1. Use reliable selectors (prioritize ID, Name, Data-Test-ID, then CSS/XPath).
 2. Include necessary imports and setup.
@@ -94,6 +108,8 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
     setTestName("");
     setDescription("");
     setTestSteps([{ id: "1", action: "Navigate to the home page" }]);
+    setSelectors("");
+    setTestData("");
     setStep(1);
     toast({
       title: "Wizard Reset",
@@ -101,8 +117,25 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
     });
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 5));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "selectors" | "data") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (type === "selectors") setSelectors(content);
+      else setTestData(content);
+      toast({
+        title: "File Uploaded",
+        description: `${file.name} has been processed successfully.`,
+      });
+    };
+    reader.readAsText(file);
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -123,7 +156,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
         <div className="lg:col-span-7 space-y-6">
           <Card className="border-none shadow-xl shadow-slate-200/50 dark:shadow-none bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm overflow-hidden">
             <div className="flex border-b">
-              {[1, 2, 3, 4].map((i) => (
+              {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
                   className={`flex-1 h-1.5 transition-colors duration-300 ${
@@ -132,26 +165,29 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
                 />
               ))}
             </div>
-            
+
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2 text-primary mb-2">
                 {step === 1 && <Terminal size={20} />}
                 {step === 2 && <Layout size={20} />}
                 {step === 3 && <ListChecks size={20} />}
-                {step === 4 && <Settings2 size={20} />}
-                <span className="text-sm font-bold uppercase tracking-wider">Step {step} of 4</span>
+                {step === 4 && <Database size={20} />}
+                {step === 5 && <Settings2 size={20} />}
+                <span className="text-sm font-bold uppercase tracking-wider">Step {step} of 5</span>
               </div>
               <CardTitle className="text-2xl">
                 {step === 1 && "Select Framework"}
                 {step === 2 && "Test Details"}
                 {step === 3 && "Automation Steps"}
-                {step === 4 && "Configurations"}
+                {step === 4 && "Selectors & Data"}
+                {step === 5 && "Configurations"}
               </CardTitle>
               <CardDescription>
                 {step === 1 && "Choose the technology stack for your automation test."}
                 {step === 2 && "Provide the core information about the test case."}
                 {step === 3 && "List the specific actions and assertions to be performed."}
-                {step === 4 && "Fine-tune the output with coding standards and patterns."}
+                {step === 4 && "Upload or paste element selectors and test data."}
+                {step === 5 && "Fine-tune the output with coding standards and patterns."}
               </CardDescription>
             </CardHeader>
 
@@ -275,6 +311,85 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
 
               {step === 4 && (
                 <div className="space-y-6 pt-4">
+                  <Tabs defaultValue="selectors" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-4">
+                      <TabsTrigger value="selectors" className="gap-2">
+                        <FileUp size={16} /> Selectors
+                      </TabsTrigger>
+                      <TabsTrigger value="data" className="gap-2">
+                        <Database size={16} /> Test Data
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="selectors" className="space-y-4 animate-in fade-in slide-in-from-left-2 duration-300">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="selectors">Element Selectors (JSON/Text)</Label>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            id="selector-upload"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, "selectors")}
+                            accept=".json,.txt,.csv"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-2 rounded-full"
+                            onClick={() => document.getElementById('selector-upload')?.click()}
+                          >
+                            <Upload size={14} /> Upload File
+                          </Button>
+                        </div>
+                      </div>
+                      <Textarea
+                        id="selectors"
+                        placeholder='{ "loginBtn": "#login", "userField": "input[name=\"user\"]" }'
+                        value={selectors}
+                        onChange={(e) => setSelectors(e.target.value)}
+                        className="min-h-[250px] font-mono text-sm rounded-lg resize-none bg-slate-50/50 dark:bg-slate-900"
+                      />
+                      <p className="text-[10px] text-muted-foreground italic">
+                        Tip: Paste your existing selector map or JSON exported from your dev tools.
+                      </p>
+                    </TabsContent>
+                    <TabsContent value="data" className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="testData">Test Data (CSV/JSON/Text)</Label>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            id="data-upload"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, "data")}
+                            accept=".json,.txt,.csv"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-2 rounded-full"
+                            onClick={() => document.getElementById('data-upload')?.click()}
+                          >
+                            <Upload size={14} /> Upload File
+                          </Button>
+                        </div>
+                      </div>
+                      <Textarea
+                        id="testData"
+                        placeholder="user1, pass123&#10;user2, pass456"
+                        value={testData}
+                        onChange={(e) => setTestData(e.target.value)}
+                        className="min-h-[250px] font-mono text-sm rounded-lg resize-none bg-slate-50/50 dark:bg-slate-900"
+                      />
+                      <p className="text-[10px] text-muted-foreground italic">
+                        Tip: Provide rows of data for parameterized tests or complex objects.
+                      </p>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              )}
+
+              {step === 5 && (
+                <div className="space-y-6 pt-4">
                   <div className="flex items-center space-x-3 p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-900">
                     <Checkbox 
                       id="pom" 
@@ -323,10 +438,10 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
                   </Button>
                 )}
                 <Button
-                  onClick={step === 4 ? copyToClipboard : nextStep}
+                  onClick={step === 5 ? copyToClipboard : nextStep}
                   className="gap-2 rounded-lg px-8 shadow-lg shadow-primary/20"
                 >
-                  {step === 4 ? (
+                  {step === 5 ? (
                     <> {isCopied ? <Check size={18} /> : <Copy size={18} />} Copy Prompt </>
                   ) : (
                     <> Next Step <ChevronRight size={18} /> </>
