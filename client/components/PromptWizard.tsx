@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload } from "lucide-react";
+import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload, Sparkles, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type Framework = 
@@ -42,6 +42,43 @@ export function PromptWizard() {
   const [testData, setTestData] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
+
+  const generateRandomData = (type: string) => {
+    const firstNames = ["James", "Mary", "Robert", "Patricia", "John", "Jennifer", "Michael", "Linda"];
+    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"];
+    const domains = ["example.com", "testmail.org", "demo.io", "automation.net"];
+    const streets = ["Maple Ave", "Oak St", "Washington Blvd", "Lakeview Dr", "Parkway Dr"];
+    const cities = ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"];
+
+    let result = "";
+    switch (type) {
+      case "name":
+        result = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+        break;
+      case "email":
+        const fn = firstNames[Math.floor(Math.random() * firstNames.length)].toLowerCase();
+        const ln = lastNames[Math.floor(Math.random() * lastNames.length)].toLowerCase();
+        result = `${fn}.${ln}@${domains[Math.floor(Math.random() * domains.length)]}`;
+        break;
+      case "phone":
+        result = `+1 (${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
+        break;
+      case "address":
+        result = `${Math.floor(Math.random() * 9000) + 100} ${streets[Math.floor(Math.random() * streets.length)]}, ${cities[Math.floor(Math.random() * cities.length)]}, USA`;
+        break;
+      case "date":
+        const date = new Date();
+        date.setDate(date.getDate() + Math.floor(Math.random() * 365));
+        result = date.toISOString().split('T')[0];
+        break;
+    }
+
+    setTestData(prev => prev ? `${prev}\n${result}` : result);
+    toast({
+      title: "Data Generated",
+      description: `Added a random ${type} to test data.`,
+    });
+  };
 
   const addStep = () => {
     setTestSteps([...testSteps, { id: Math.random().toString(36).substr(2, 9), action: "" }]);
@@ -355,22 +392,37 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
                     <TabsContent value="data" className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="testData">Test Data (CSV/JSON/Text)</Label>
-                        <div className="relative">
-                          <input
-                            type="file"
-                            id="data-upload"
-                            className="hidden"
-                            onChange={(e) => handleFileUpload(e, "data")}
-                            accept=".json,.txt,.csv"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 gap-2 rounded-full"
-                            onClick={() => document.getElementById('data-upload')?.click()}
-                          >
-                            <Upload size={14} /> Upload File
-                          </Button>
+                        <div className="flex gap-2">
+                          <Select onValueChange={generateRandomData}>
+                            <SelectTrigger className="h-8 w-[140px] rounded-full text-xs gap-2">
+                              <Wand2 size={12} className="text-primary" />
+                              <SelectValue placeholder="Generate Random" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="name">Full Name</SelectItem>
+                              <SelectItem value="email">Email Address</SelectItem>
+                              <SelectItem value="phone">Phone Number</SelectItem>
+                              <SelectItem value="address">Postal Address</SelectItem>
+                              <SelectItem value="date">Random Date</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              id="data-upload"
+                              className="hidden"
+                              onChange={(e) => handleFileUpload(e, "data")}
+                              accept=".json,.txt,.csv"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 gap-2 rounded-full"
+                              onClick={() => document.getElementById('data-upload')?.click()}
+                            >
+                              <Upload size={14} /> Upload File
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       <Textarea
