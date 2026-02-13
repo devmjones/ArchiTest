@@ -1,0 +1,426 @@
+import React, { useState } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+type Framework = 
+  | "Selenium Java" 
+  | "Selenide Java" 
+  | "TestNG Java" 
+  | "Selenium Python" 
+  | "Playwright Python" 
+  | "Playwright Java";
+
+interface TestStep {
+  id: string;
+  action: string;
+  expected?: string;
+}
+
+export function PromptWizard() {
+  const [step, setStep] = useState(1);
+  const [framework, setFramework] = useState<Framework>("Playwright Python");
+  const [url, setUrl] = useState("");
+  const [testName, setTestName] = useState("");
+  const [description, setDescription] = useState("");
+  const [testSteps, setTestSteps] = useState<TestStep[]>([
+    { id: "1", action: "Navigate to the home page" },
+  ]);
+  const [usePageObjects, setUsePageObjects] = useState(true);
+  const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
+  const [isCopied, setIsCopied] = useState(false);
+  const { toast } = useToast();
+
+  const addStep = () => {
+    setTestSteps([...testSteps, { id: Math.random().toString(36).substr(2, 9), action: "" }]);
+  };
+
+  const removeStep = (id: string) => {
+    if (testSteps.length > 1) {
+      setTestSteps(testSteps.filter((s) => s.id !== id));
+    }
+  };
+
+  const updateStep = (id: string, field: keyof TestStep, value: string) => {
+    setTestSteps(testSteps.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
+  };
+
+  const generatePrompt = () => {
+    return `Generate a precise automated web UI test using ${framework}.
+
+## Project Context
+- **Base URL**: ${url || "N/A"}
+- **Test Name**: ${testName || "Automated Test"}
+- **Page Object Model**: ${usePageObjects ? "Yes, please follow POM pattern" : "No, keep it simple"}
+- **Coding Standards**: ${codingStandards}
+
+## Test Scenario
+${description ? `**Description**: ${description}` : ""}
+
+### Steps to Automate:
+${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Verify: ${s.expected})` : ""}`).join("\n")}
+
+## Requirements:
+1. Use reliable selectors (prioritize ID, Name, Data-Test-ID, then CSS/XPath).
+2. Include necessary imports and setup.
+3. ${framework.includes("Java") ? "Ensure thread-safety and proper teardown." : "Use async/await where applicable."}
+4. Provide clean, well-commented code.
+${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features." : ""}
+`;
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatePrompt());
+    setIsCopied(true);
+    toast({
+      title: "Prompt Copied!",
+      description: "The LLM prompt has been copied to your clipboard.",
+    });
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const resetWizard = () => {
+    setUrl("");
+    setTestName("");
+    setDescription("");
+    setTestSteps([{ id: "1", action: "Navigate to the home page" }]);
+    setStep(1);
+    toast({
+      title: "Wizard Reset",
+      description: "All inputs have been cleared.",
+    });
+  };
+
+  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
+  const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+
+  return (
+    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="text-center space-y-2">
+        <Badge variant="outline" className="px-3 py-1 text-primary border-primary/20 bg-primary/5">
+          Automation Wizard
+        </Badge>
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-900 dark:text-slate-50">
+          Construct Precise <span className="text-primary">Test Prompts</span>
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Generate high-quality prompts for Selenium, Playwright, and Selenide tests in seconds.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Wizard Steps */}
+        <div className="lg:col-span-7 space-y-6">
+          <Card className="border-none shadow-xl shadow-slate-200/50 dark:shadow-none bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm overflow-hidden">
+            <div className="flex border-b">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className={`flex-1 h-1.5 transition-colors duration-300 ${
+                    i <= step ? "bg-primary" : "bg-slate-100 dark:bg-slate-800"
+                  }`}
+                />
+              ))}
+            </div>
+            
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2 text-primary mb-2">
+                {step === 1 && <Terminal size={20} />}
+                {step === 2 && <Layout size={20} />}
+                {step === 3 && <ListChecks size={20} />}
+                {step === 4 && <Settings2 size={20} />}
+                <span className="text-sm font-bold uppercase tracking-wider">Step {step} of 4</span>
+              </div>
+              <CardTitle className="text-2xl">
+                {step === 1 && "Select Framework"}
+                {step === 2 && "Test Details"}
+                {step === 3 && "Automation Steps"}
+                {step === 4 && "Configurations"}
+              </CardTitle>
+              <CardDescription>
+                {step === 1 && "Choose the technology stack for your automation test."}
+                {step === 2 && "Provide the core information about the test case."}
+                {step === 3 && "List the specific actions and assertions to be performed."}
+                {step === 4 && "Fine-tune the output with coding standards and patterns."}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="min-h-[400px]">
+              {step === 1 && (
+                <div className="space-y-4 pt-4">
+                  <Label>Automation Framework & Language</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {[
+                      "Playwright Python",
+                      "Playwright Java",
+                      "Selenium Python",
+                      "Selenium Java",
+                      "Selenide Java",
+                      "TestNG Java",
+                    ].map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setFramework(f as Framework)}
+                        className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 group ${
+                          framework === f 
+                            ? "border-primary bg-primary/5 ring-4 ring-primary/10" 
+                            : "border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900"
+                        }`}
+                      >
+                        <div className="font-semibold text-lg mb-1 flex items-center justify-between">
+                          {f}
+                          {framework === f && <div className="w-2 h-2 rounded-full bg-primary" />}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." : "The industry standard for web automation."}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="space-y-6 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="url">Base URL</Label>
+                    <Input 
+                      id="url" 
+                      placeholder="https://example.com/login" 
+                      value={url} 
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="rounded-lg h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="testName">Test Case Name</Label>
+                    <Input 
+                      id="testName" 
+                      placeholder="User Login Workflow" 
+                      value={testName} 
+                      onChange={(e) => setTestName(e.target.value)}
+                      className="rounded-lg h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Short Description (Optional)</Label>
+                    <Textarea 
+                      id="description" 
+                      placeholder="Briefly explain what this test intends to cover..." 
+                      value={description} 
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="min-h-[120px] rounded-lg resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <Label>Test Steps & Assertions</Label>
+                    <Button variant="outline" size="sm" onClick={addStep} className="h-8 gap-1 rounded-full px-3">
+                      <Plus size={14} /> Add Step
+                    </Button>
+                  </div>
+                  <ScrollArea className="h-[350px] pr-4">
+                    <div className="space-y-4 pb-4">
+                      {testSteps.map((s, idx) => (
+                        <div key={s.id} className="relative p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 group">
+                          <div className="absolute -left-3 top-4 w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">
+                            {idx + 1}
+                          </div>
+                          <div className="space-y-3">
+                            <div className="space-y-1">
+                              <span className="text-[10px] uppercase font-bold text-muted-foreground">Action</span>
+                              <Input 
+                                placeholder="e.g. Click on 'Login' button" 
+                                value={s.action}
+                                onChange={(e) => updateStep(s.id, "action", e.target.value)}
+                                className="border-none bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-1 h-9"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <span className="text-[10px] uppercase font-bold text-muted-foreground text-primary">Verification (Optional)</span>
+                              <Input 
+                                placeholder="e.g. Verify 'Dashboard' is visible" 
+                                value={s.expected}
+                                onChange={(e) => updateStep(s.id, "expected", e.target.value)}
+                                className="border-none bg-primary/5 focus-visible:ring-1 h-9"
+                              />
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => removeStep(s.id)}
+                            className="absolute -right-2 -top-2 p-1.5 rounded-full bg-white dark:bg-slate-900 border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+
+              {step === 4 && (
+                <div className="space-y-6 pt-4">
+                  <div className="flex items-center space-x-3 p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-900">
+                    <Checkbox 
+                      id="pom" 
+                      checked={usePageObjects} 
+                      onCheckedChange={(checked) => setUsePageObjects(checked as boolean)}
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                      <label
+                        htmlFor="pom"
+                        className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Use Page Object Model (POM)
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Encourage the AI to generate structured, reusable page classes.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="standards">Custom Coding Standards</Label>
+                    <Textarea 
+                      id="standards" 
+                      placeholder="e.g. Use CSS selectors over XPath, include Javadoc..." 
+                      value={codingStandards} 
+                      onChange={(e) => setCodingStandards(e.target.value)}
+                      className="min-h-[150px] rounded-lg resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+            </CardContent>
+
+            <CardFooter className="flex justify-between border-t bg-slate-50/50 dark:bg-slate-900/50 p-6">
+              <Button
+                variant="ghost"
+                onClick={prevStep}
+                disabled={step === 1}
+                className="gap-2 rounded-lg"
+              >
+                <ChevronLeft size={18} /> Previous
+              </Button>
+              <div className="flex gap-2">
+                {step > 1 && (
+                  <Button variant="outline" onClick={resetWizard} className="rounded-lg">
+                    Reset
+                  </Button>
+                )}
+                <Button
+                  onClick={step === 4 ? copyToClipboard : nextStep}
+                  className="gap-2 rounded-lg px-8 shadow-lg shadow-primary/20"
+                >
+                  {step === 4 ? (
+                    <> {isCopied ? <Check size={18} /> : <Copy size={18} />} Copy Prompt </>
+                  ) : (
+                    <> Next Step <ChevronRight size={18} /> </>
+                  )}
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
+
+        {/* Right Column: Prompt Preview */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Prompt Preview</h3>
+            <Badge variant="secondary" className="font-mono text-[10px]">PREVIEW MODE</Badge>
+          </div>
+          <Card className="border-none shadow-xl bg-[#1e293b] text-slate-300 overflow-hidden font-mono text-sm h-[calc(100%-2rem)] min-h-[500px]">
+            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#0f172a] border-b border-slate-800">
+              <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
+              <div className="w-3 h-3 rounded-full bg-amber-500/20 border border-amber-500/50" />
+              <div className="w-3 h-3 rounded-full bg-emerald-500/20 border border-emerald-500/50" />
+              <span className="ml-2 text-[10px] text-slate-500 font-sans font-bold">llm-prompt.md</span>
+            </div>
+            <ScrollArea className="h-[550px]">
+              <div className="p-6 whitespace-pre-wrap">
+                {generatePrompt().split('\n').map((line, i) => (
+                  <div key={i} className="mb-1">
+                    {line.startsWith('##') || line.startsWith('#') ? (
+                      <span className="text-primary font-bold">{line}</span>
+                    ) : line.startsWith('**') ? (
+                      <span className="text-white font-semibold">{line}</span>
+                    ) : line.startsWith('-') || line.match(/^\d\./) ? (
+                      <span className="text-slate-400">{line}</span>
+                    ) : (
+                      line
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+            <div className="absolute bottom-4 right-4">
+               <Button 
+                size="sm" 
+                onClick={copyToClipboard}
+                className="rounded-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 gap-2"
+              >
+                {isCopied ? <Check size={14} /> : <Copy size={14} />} 
+                {isCopied ? "Copied" : "Copy"}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-12">
+        <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-slate-900 border shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <Layout size={20} />
+          </div>
+          <h4 className="font-bold text-lg">Framework Specific</h4>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Tailored instructions for Java, Python, and modern tools like Playwright or Selenide.
+          </p>
+        </div>
+        <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-slate-900 border shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+            <ListChecks size={20} />
+          </div>
+          <h4 className="font-bold text-lg">POM Integration</h4>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Automatically includes instructions to follow the Page Object Model design pattern.
+          </p>
+        </div>
+        <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-slate-900 border shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+            <Terminal size={20} />
+          </div>
+          <h4 className="font-bold text-lg">Clean Code</h4>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Enforces coding standards, reliable selectors, and best practices in the output.
+          </p>
+        </div>
+      </div>
+
+      <footer className="pt-12 pb-8 border-t text-center space-y-4">
+        <div className="flex items-center justify-center gap-6">
+          <a href="#" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">Documentation</a>
+          <a href="#" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">Support</a>
+          <a href="#" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a>
+        </div>
+        <p className="text-xs text-muted-foreground opacity-60">
+          © {new Date().getFullYear()} AutomationWizard. Engineered for QA Professionals.
+        </p>
+      </footer>
+    </div>
+  );
+}
