@@ -22,7 +22,10 @@ type Framework =
   | "TestNG Java"
   | "Selenium Python"
   | "Playwright Python"
-  | "Playwright Java";
+  | "Playwright Java"
+  | "Playwright JavaScript"
+  | "Selenium JavaScript"
+  | "Cypress JavaScript";
 
 /**
  * Structure for a single test step in the scenario builder.
@@ -146,9 +149,12 @@ ${testData}
 ## Requirements:
 1. Use reliable selectors (prioritize ID, Name, Data-Test-ID, then CSS/XPath).
 2. Include necessary imports and setup.
-3. ${framework.includes("Java") ? "Ensure thread-safety and proper teardown." : "Use async/await where applicable."}
+3. ${framework.includes("Java") ? "Ensure thread-safety and proper teardown." :
+     framework.includes("Cypress") ? "Use Cypress best practices and custom commands if needed." :
+     "Use async/await where applicable."}
 4. Provide clean, well-commented code.
 ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features." : ""}
+${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and auto-retry logic." : ""}
 `;
   };
 
@@ -212,7 +218,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
           Construct Precise <span className="text-primary">Test Generation Prompts</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Generate high-quality prompts for Selenium, Playwright, and Selenide tests in seconds.
+          Generate high-quality prompts for Selenium, Playwright, Cypress, and Selenide tests in seconds.
         </p>
       </div>
 
@@ -262,8 +268,11 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
                   <Label>Automation Framework & Language</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {[
+                      "Playwright JavaScript",
                       "Playwright Python",
                       "Playwright Java",
+                      "Cypress JavaScript",
+                      "Selenium JavaScript",
                       "Selenium Python",
                       "Selenium Java",
                       "Selenide Java",
@@ -283,7 +292,9 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
                           {framework === f && <div className="w-2 h-2 rounded-full bg-primary" />}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." : "The industry standard for web automation."}
+                          {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." :
+                           f.includes("Cypress") ? "Developer-friendly, all-in-one testing framework." :
+                           "The industry standard for web automation."}
                         </p>
                       </button>
                     ))}
@@ -583,7 +594,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
           </div>
           <h4 className="font-bold text-lg">Framework Specific</h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Tailored instructions for Java, Python, and modern tools like Playwright or Selenide.
+            Tailored instructions for Java, Python, JavaScript, and modern tools like Playwright, Cypress, or Selenide.
           </p>
         </div>
         <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-slate-900 border shadow-sm">
