@@ -24,7 +24,7 @@ export function Navbar() {
         {/* Main Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">Generator</Link>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Templates</a>
+          <Link to="/templates" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Templates</Link>
           <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Resources</a>
         </div>
 
