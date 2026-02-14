@@ -206,7 +206,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
     <div className="w-full max-w-5xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="text-center space-y-2">
         <Badge variant="outline" className="px-3 py-1 text-primary border-primary/20 bg-primary/5">
-          Automation Wizard
+          ArchiTest Wizard
         </Badge>
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-900 dark:text-slate-50">
           Construct Precise <span className="text-primary">Test Generation Prompts</span>

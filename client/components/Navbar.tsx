@@ -12,14 +12,18 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
         {/* Brand/Logo Area */}
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
-            <Bug size={22} />
+        <Link to="/" className="flex items-center gap-2 group transition-all">
+          <div className="relative w-10 h-10 flex items-center justify-center overflow-hidden rounded-lg bg-slate-900 shadow-lg group-hover:shadow-primary/20 transition-all">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F639baa98c2974995863e87502945121e?format=webp&width=80&height=80"
+              alt="ArchiTest Logo"
+              className="w-full h-full object-contain p-1.5"
+            />
           </div>
-          <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
+          <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-primary dark:from-white dark:to-primary">
             ArchiTest<span className="text-primary">.</span>
           </span>
-        </div>
+        </Link>
 
         {/* Main Navigation Links */}
         <div className="hidden md:flex items-center gap-8">

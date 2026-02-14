@@ -178,24 +178,24 @@ export default function Templates() {
           ))}
         </div>
 
-        <section className="mt-20 p-8 md:p-12 rounded-3xl bg-slate-900 text-white relative overflow-hidden">
+        <section className="mt-20 p-8 md:p-12 rounded-3xl bg-slate-900 dark:bg-slate-900 text-white relative overflow-hidden border border-white/5">
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs font-semibold backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary-foreground text-xs font-semibold backdrop-blur-md border border-primary/20">
                 <BookOpen size={14} /> Documentation
               </div>
               <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                Don't see your use case? 
+                Don't see your use case?
                 <br />
                 <span className="text-primary">Customize your own.</span>
               </h2>
               <p className="text-slate-400 text-lg">
-                The Automation Wizard is designed to be highly flexible. You can input any custom selector maps, 
-                dynamic data, and multi-step workflows.
+                The ArchiTest Wizard is designed to be highly flexible. You can input any custom selector maps,
+                dynamic data, and multi-step workflows to generate the perfect test.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/">
-                  <Button className="rounded-full px-8 h-12 gap-2 text-lg">
+                  <Button className="rounded-full px-8 h-12 gap-2 text-lg shadow-lg shadow-primary/20">
                     Back to Generator <ArrowRight size={18} />
                   </Button>
                 </Link>
@@ -205,12 +205,12 @@ export default function Templates() {
               </div>
             </div>
             <div className="hidden lg:block">
-              <div className="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+              <div className="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl">
                 <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
                    <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-white/20" />
-                    <div className="w-3 h-3 rounded-full bg-white/20" />
-                    <div className="w-3 h-3 rounded-full bg-white/20" />
+                    <div className="w-3 h-3 rounded-full bg-red-400/50" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400/50" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-400/50" />
                    </div>
                    <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Example Config</span>
                 </div>
