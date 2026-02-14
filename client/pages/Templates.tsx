@@ -235,7 +235,7 @@ export default function Templates() {
       
       <footer className="pt-12 pb-8 border-t text-center space-y-4 bg-white dark:bg-slate-950">
         <p className="text-xs text-muted-foreground opacity-60">
-          © {new Date().getFullYear()} AutoPrompt. All rights reserved.
+          © {new Date().getFullYear()} ArchiTest. All rights reserved.
         </p>
       </footer>
     </div>

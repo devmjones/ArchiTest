@@ -17,7 +17,7 @@ export function Navbar() {
             <Bug size={22} />
           </div>
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
-            AutoPrompt<span className="text-primary">.</span>
+            ArchiTest<span className="text-primary">.</span>
           </span>
         </div>
 

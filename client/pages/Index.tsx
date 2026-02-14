@@ -7,7 +7,7 @@ import { ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
 
 /**
  * Home Page component.
- * Serves as the main entry point for the AutoPrompt application,
+ * Serves as the main entry point for the ArchiTest application,
  * wrapping the wizard in a standard layout with background decorations.
  */
 export default function Index() {

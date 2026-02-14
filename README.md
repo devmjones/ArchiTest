@@ -1,4 +1,4 @@
-# AutoPrompt. - Automation Wizard
+# ArchiTest - Automation Wizard
 
 Construct precise LLM prompts for generating automated web UI tests in Selenium, Playwright, Selenide, and more.
 

@@ -613,7 +613,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
           <a href="#" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a>
         </div>
         <p className="text-xs text-muted-foreground opacity-60">
-          © {new Date().getFullYear()} AutomationWizard. Engineered for QA Professionals.
+          © {new Date().getFullYear()} ArchiTest. Engineered for QA Professionals.
         </p>
       </footer>
     </div>
