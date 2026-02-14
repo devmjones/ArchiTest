@@ -13,14 +13,20 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload, Sparkles, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-type Framework = 
-  | "Selenium Java" 
-  | "Selenide Java" 
-  | "TestNG Java" 
-  | "Selenium Python" 
-  | "Playwright Python" 
+/**
+ * Available Automation Frameworks and Languages supported by the wizard.
+ */
+type Framework =
+  | "Selenium Java"
+  | "Selenide Java"
+  | "TestNG Java"
+  | "Selenium Python"
+  | "Playwright Python"
   | "Playwright Java";
 
+/**
+ * Structure for a single test step in the scenario builder.
+ */
 interface TestStep {
   id: string;
   action: string;
@@ -28,21 +34,34 @@ interface TestStep {
 }
 
 export function PromptWizard() {
+  // Wizard flow state
   const [step, setStep] = useState(1);
+
+  // Core test configuration state
   const [framework, setFramework] = useState<Framework>("Playwright Python");
   const [url, setUrl] = useState("");
   const [testName, setTestName] = useState("");
   const [description, setDescription] = useState("");
+
+  // Test scenario steps state
   const [testSteps, setTestSteps] = useState<TestStep[]>([
     { id: "1", action: "Navigate to the home page" },
   ]);
+
+  // Advanced configuration state
   const [usePageObjects, setUsePageObjects] = useState(true);
   const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
   const [selectors, setSelectors] = useState("");
   const [testData, setTestData] = useState("");
+
+  // UI state
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
 
+  /**
+   * Generates synthetic test data based on the requested type.
+   * Appends the result to the existing testData state.
+   */
   const generateRandomData = (type: string) => {
     const firstNames = ["James", "Mary", "Robert", "Patricia", "John", "Jennifer", "Michael", "Linda"];
     const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"];
@@ -94,6 +113,9 @@ export function PromptWizard() {
     setTestSteps(testSteps.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
   };
 
+  /**
+   * Compiles all user inputs into a structured Markdown prompt for an LLM.
+   */
   const generatePrompt = () => {
     return `Generate a precise automated web UI test using ${framework}.
 
@@ -130,6 +152,9 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
 `;
   };
 
+  /**
+   * Copies the generated prompt to the user's clipboard and shows a toast notification.
+   */
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatePrompt());
     setIsCopied(true);
@@ -157,6 +182,9 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
   const nextStep = () => setStep((s) => Math.min(s + 1, 5));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
+  /**
+   * Handles file uploads for selectors and test data by reading the file as text.
+   */
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "selectors" | "data") => {
     const file = e.target.files?.[0];
     if (!file) return;
