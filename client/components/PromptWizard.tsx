@@ -209,7 +209,7 @@ ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features.
           Automation Wizard
         </Badge>
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-900 dark:text-slate-50">
-          Construct Precise <span className="text-primary">Test Prompts</span>
+          Construct Precise <span className="text-primary">Test Generation Prompts</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Generate high-quality prompts for Selenium, Playwright, and Selenide tests in seconds.
