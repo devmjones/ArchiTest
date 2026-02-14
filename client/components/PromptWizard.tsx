@@ -19,7 +19,6 @@ import { useToast } from "@/hooks/use-toast";
 type Framework =
   | "Selenium Java"
   | "Selenide Java"
-  | "TestNG Java"
   | "Selenium Python"
   | "Playwright Python"
   | "Playwright Java"
@@ -295,7 +294,6 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                       "Selenium Python",
                       "Selenium Java",
                       "Selenide Java",
-                      "TestNG Java",
                     ].map((f) => (
                       <button
                         key={f}
