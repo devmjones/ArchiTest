@@ -108,7 +108,7 @@ export default function Templates() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Navbar />
       <main className="container py-12 md:py-20 space-y-12">
-        <div className="max-w-3xl space-y-4">
+        <div className="max-w-5xl space-y-4">
           <Badge variant="outline" className="px-3 py-1 text-primary border-primary/20 bg-primary/5">
             Test Library
           </Badge>
