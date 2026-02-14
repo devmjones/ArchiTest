@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload, Sparkles, Wand2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Plus, Trash2, Copy, Check, Terminal, Layout, ListChecks, Settings2, FileUp, Database, Upload, Sparkles, Wand2, Monitor, Globe, Signal, MessageSquareText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 /**
@@ -51,8 +51,14 @@ export function PromptWizard() {
     { id: "1", action: "Navigate to the home page" },
   ]);
 
+  // Environment & Browser state
+  const [browser, setBrowser] = useState("Chromium");
+  const [viewport, setViewport] = useState("Desktop (1280x720)");
+  const [network, setNetwork] = useState("No Throttling");
+
   // Advanced configuration state
   const [usePageObjects, setUsePageObjects] = useState(true);
+  const [isBDD, setIsBDD] = useState(false);
   const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
   const [selectors, setSelectors] = useState("");
   const [testData, setTestData] = useState("");
@@ -126,7 +132,13 @@ export function PromptWizard() {
 - **Base URL**: ${url || "N/A"}
 - **Test Name**: ${testName || "Automated Test"}
 - **Page Object Model**: ${usePageObjects ? "Yes, please follow POM pattern" : "No, keep it simple"}
+- **BDD/Gherkin Support**: ${isBDD ? "Yes, generate a Gherkin .feature file and step definitions" : "No"}
 - **Coding Standards**: ${codingStandards}
+
+## Environment & Browser Configuration
+- **Browser**: ${browser}
+- **Viewport**: ${viewport}
+- **Network Profile**: ${network}
 
 ## Test Scenario
 ${description ? `**Description**: ${description}` : ""}
@@ -178,6 +190,10 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     setTestSteps([{ id: "1", action: "Navigate to the home page" }]);
     setSelectors("");
     setTestData("");
+    setBrowser("Chromium");
+    setViewport("Desktop (1280x720)");
+    setNetwork("No Throttling");
+    setIsBDD(false);
     setStep(1);
     toast({
       title: "Wizard Reset",
@@ -185,7 +201,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     });
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 5));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 6));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   /**
@@ -227,7 +243,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
         <div className="lg:col-span-7 space-y-6">
           <Card className="border-none shadow-xl shadow-slate-200/50 dark:shadow-none bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm overflow-hidden">
             <div className="flex border-b">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
                   className={`flex-1 h-1.5 transition-colors duration-300 ${
@@ -241,24 +257,27 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
               <div className="flex items-center gap-2 text-primary mb-2">
                 {step === 1 && <Terminal size={20} />}
                 {step === 2 && <Layout size={20} />}
-                {step === 3 && <ListChecks size={20} />}
-                {step === 4 && <Database size={20} />}
-                {step === 5 && <Settings2 size={20} />}
-                <span className="text-sm font-bold uppercase tracking-wider">Step {step} of 5</span>
+                {step === 3 && <Monitor size={20} />}
+                {step === 4 && <ListChecks size={20} />}
+                {step === 5 && <Database size={20} />}
+                {step === 6 && <Settings2 size={20} />}
+                <span className="text-sm font-bold uppercase tracking-wider">Step {step} of 6</span>
               </div>
               <CardTitle className="text-2xl">
                 {step === 1 && "Select Framework"}
                 {step === 2 && "Test Details"}
-                {step === 3 && "Automation Steps"}
-                {step === 4 && "Selectors & Data"}
-                {step === 5 && "Configurations"}
+                {step === 3 && "Environment & Browser"}
+                {step === 4 && "Automation Steps"}
+                {step === 5 && "Selectors & Data"}
+                {step === 6 && "Configurations"}
               </CardTitle>
               <CardDescription>
                 {step === 1 && "Choose the technology stack for your automation test."}
                 {step === 2 && "Provide the core information about the test case."}
-                {step === 3 && "List the specific actions and assertions to be performed."}
-                {step === 4 && "Upload or paste element selectors and test data."}
-                {step === 5 && "Fine-tune the output with coding standards and patterns."}
+                {step === 3 && "Define where and how the test should be executed."}
+                {step === 4 && "List the specific actions and assertions to be performed."}
+                {step === 5 && "Upload or paste element selectors and test data."}
+                {step === 6 && "Fine-tune the output with coding standards and patterns."}
               </CardDescription>
             </CardHeader>
 
@@ -338,6 +357,62 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
               )}
 
               {step === 3 && (
+                <div className="space-y-6 pt-4">
+                  <div className="space-y-4">
+                    <Label className="flex items-center gap-2">
+                      <Globe size={16} className="text-primary" /> Target Browser
+                    </Label>
+                    <Select value={browser} onValueChange={setBrowser}>
+                      <SelectTrigger className="h-12 rounded-lg">
+                        <SelectValue placeholder="Select Browser" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Chromium">Chromium (Chrome/Edge)</SelectItem>
+                        <SelectItem value="Firefox">Firefox</SelectItem>
+                        <SelectItem value="WebKit">WebKit (Safari)</SelectItem>
+                        <SelectItem value="Cross-Browser">Cross-Browser (All)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label className="flex items-center gap-2">
+                      <Monitor size={16} className="text-primary" /> Viewport / Device
+                    </Label>
+                    <Select value={viewport} onValueChange={setViewport}>
+                      <SelectTrigger className="h-12 rounded-lg">
+                        <SelectValue placeholder="Select Viewport" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Desktop (1280x720)">Desktop (1280x720)</SelectItem>
+                        <SelectItem value="Desktop (1920x1080)">Desktop (1920x1080)</SelectItem>
+                        <SelectItem value="iPhone 13 (Mobile)">iPhone 13 (Mobile)</SelectItem>
+                        <SelectItem value="iPad Air (Tablet)">iPad Air (Tablet)</SelectItem>
+                        <SelectItem value="Responsive (Custom)">Responsive (Custom)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label className="flex items-center gap-2">
+                      <Signal size={16} className="text-primary" /> Network Profile
+                    </Label>
+                    <Select value={network} onValueChange={setNetwork}>
+                      <SelectTrigger className="h-12 rounded-lg">
+                        <SelectValue placeholder="Select Network Speed" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="No Throttling">No Throttling (Fast)</SelectItem>
+                        <SelectItem value="Fast 3G">Fast 3G</SelectItem>
+                        <SelectItem value="Slow 3G">Slow 3G</SelectItem>
+                        <SelectItem value="Offline">Offline Mode</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {step === 4 && (
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center justify-between mb-2">
                     <Label>Test Steps & Assertions</Label>
@@ -355,8 +430,8 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                           <div className="space-y-3">
                             <div className="space-y-1">
                               <span className="text-[10px] uppercase font-bold text-muted-foreground">Action</span>
-                              <Input 
-                                placeholder="e.g. Click on 'Login' button" 
+                              <Input
+                                placeholder="e.g. Click on 'Login' button"
                                 value={s.action}
                                 onChange={(e) => updateStep(s.id, "action", e.target.value)}
                                 className="border-none bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-1 h-9"
@@ -364,15 +439,15 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                             </div>
                             <div className="space-y-1">
                               <span className="text-[10px] uppercase font-bold text-muted-foreground text-primary">Verification (Optional)</span>
-                              <Input 
-                                placeholder="e.g. Verify 'Dashboard' is visible" 
+                              <Input
+                                placeholder="e.g. Verify 'Dashboard' is visible"
                                 value={s.expected}
                                 onChange={(e) => updateStep(s.id, "expected", e.target.value)}
                                 className="border-none bg-primary/5 focus-visible:ring-1 h-9"
                               />
                             </div>
                           </div>
-                          <button 
+                          <button
                             onClick={() => removeStep(s.id)}
                             className="absolute -right-2 -top-2 p-1.5 rounded-full bg-white dark:bg-slate-900 border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
                           >
@@ -385,7 +460,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                 </div>
               )}
 
-              {step === 4 && (
+              {step === 5 && (
                 <div className="space-y-6 pt-4">
                   <Tabs defaultValue="selectors" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -479,32 +554,54 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                 </div>
               )}
 
-              {step === 5 && (
+              {step === 6 && (
                 <div className="space-y-6 pt-4">
-                  <div className="flex items-center space-x-3 p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-900">
-                    <Checkbox 
-                      id="pom" 
-                      checked={usePageObjects} 
-                      onCheckedChange={(checked) => setUsePageObjects(checked as boolean)}
-                    />
-                    <div className="grid gap-1.5 leading-none">
-                      <label
-                        htmlFor="pom"
-                        className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Use Page Object Model (POM)
-                      </label>
-                      <p className="text-xs text-muted-foreground">
-                        Encourage the AI to generate structured, reusable page classes.
-                      </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-900">
+                      <Checkbox
+                        id="pom"
+                        checked={usePageObjects}
+                        onCheckedChange={(checked) => setUsePageObjects(checked as boolean)}
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <label
+                          htmlFor="pom"
+                          className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Use Page Object Model (POM)
+                        </label>
+                        <p className="text-xs text-muted-foreground">
+                          Encourage the AI to generate structured, reusable page classes.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3 p-4 rounded-xl border bg-primary/5 border-primary/10">
+                      <Checkbox
+                        id="bdd"
+                        checked={isBDD}
+                        onCheckedChange={(checked) => setIsBDD(checked as boolean)}
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <label
+                          htmlFor="bdd"
+                          className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                        >
+                          <MessageSquareText size={14} className="text-primary" /> BDD / Gherkin Support
+                        </label>
+                        <p className="text-xs text-muted-foreground">
+                          Generate .feature files and step definitions for Cucumber integration.
+                        </p>
+                      </div>
                     </div>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="standards">Custom Coding Standards</Label>
-                    <Textarea 
-                      id="standards" 
-                      placeholder="e.g. Use CSS selectors over XPath, include Javadoc..." 
-                      value={codingStandards} 
+                    <Textarea
+                      id="standards"
+                      placeholder="e.g. Use CSS selectors over XPath, include Javadoc..."
+                      value={codingStandards}
                       onChange={(e) => setCodingStandards(e.target.value)}
                       className="min-h-[150px] rounded-lg resize-none"
                     />
@@ -529,10 +626,10 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                   </Button>
                 )}
                 <Button
-                  onClick={step === 5 ? copyToClipboard : nextStep}
+                  onClick={step === 6 ? copyToClipboard : nextStep}
                   className="gap-2 rounded-lg px-8 shadow-lg shadow-primary/20"
                 >
-                  {step === 5 ? (
+                  {step === 6 ? (
                     <> {isCopied ? <Check size={18} /> : <Copy size={18} />} Copy Prompt </>
                   ) : (
                     <> Next Step <ChevronRight size={18} /> </>
