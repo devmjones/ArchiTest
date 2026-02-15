@@ -17,7 +17,7 @@ export function Navbar() {
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F639baa98c2974995863e87502945121e?format=webp&width=80&height=80"
               alt="ArchiTest Logo"
-              className="w-full h-full object-contain p-1.5"
+              className="w-full h-full object-contain p-0"
             />
           </div>
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-primary dark:from-white dark:to-primary">
