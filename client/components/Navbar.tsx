@@ -13,11 +13,11 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         {/* Brand/Logo Area */}
         <Link to="/" className="flex items-center gap-2 group transition-all">
-          <div className="relative w-12 h-12 flex items-center justify-center transition-all">
+          <div className="relative w-11 h-11 flex items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all">
             <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F210a468b58d842d1bcbf539f39fecf89?format=webp&width=120&height=120"
+              src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F0dd6fb57b3b244658036957a1b7f277a?format=webp&width=120&height=120"
               alt="ArchiTest Logo"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-primary dark:from-white dark:to-primary">
