@@ -58,6 +58,7 @@ export function PromptWizard() {
   // Advanced configuration state
   const [usePageObjects, setUsePageObjects] = useState(true);
   const [isBDD, setIsBDD] = useState(false);
+  const [testRunner, setTestRunner] = useState("JUnit 5");
   const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
   const [selectors, setSelectors] = useState("");
   const [testData, setTestData] = useState("");
@@ -132,6 +133,7 @@ export function PromptWizard() {
 - **Test Name**: ${testName || "Automated Test"}
 - **Page Object Model**: ${usePageObjects ? "Yes, please follow POM pattern" : "No, keep it simple"}
 - **BDD/Gherkin Support**: ${isBDD ? "Yes, generate a Gherkin .feature file and step definitions" : "No"}
+${framework.includes("Java") ? `- **Test Runner**: ${testRunner}` : ""}
 - **Coding Standards**: ${codingStandards}
 
 ## Environment & Browser Configuration
@@ -193,6 +195,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     setViewport("Desktop (1280x720)");
     setNetwork("No Throttling");
     setIsBDD(false);
+    setTestRunner("JUnit 5");
     setStep(1);
     toast({
       title: "Wizard Reset",
@@ -592,6 +595,26 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                         </p>
                       </div>
                     </div>
+
+                    {framework.includes("Java") && (
+                      <div className="space-y-4 p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-900">
+                        <Label className="flex items-center gap-2">
+                          <Settings2 size={16} className="text-primary" /> Java Test Runner
+                        </Label>
+                        <Select value={testRunner} onValueChange={setTestRunner}>
+                          <SelectTrigger className="h-10 rounded-lg">
+                            <SelectValue placeholder="Select Test Runner" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="JUnit 5">JUnit 5</SelectItem>
+                            <SelectItem value="TestNG">TestNG</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Choose the test execution framework for your Java project.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
