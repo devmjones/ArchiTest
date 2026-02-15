@@ -24,6 +24,7 @@ type Framework =
   | "Playwright Java"
   | "Playwright JavaScript"
   | "Selenium JavaScript"
+  | "Selenium C#"
   | "Cypress JavaScript";
 
 /**
@@ -164,6 +165,7 @@ ${testData}
 2. Include necessary imports and setup.
 3. ${framework.includes("Java") ? "Ensure thread-safety and proper teardown." :
      framework.includes("Cypress") ? "Use Cypress best practices and custom commands if needed." :
+     framework.includes("C#") ? "Follow C# coding conventions and use NUnit or xUnit assertions." :
      "Use async/await where applicable."}
 4. Provide clean, well-commented code.
 ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features." : ""}
@@ -295,6 +297,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                       "Cypress JavaScript",
                       "Selenium JavaScript",
                       "Selenium Python",
+                      "Selenium C#",
                       "Selenium Java",
                       "Selenide Java",
                     ].map((f) => (
@@ -314,6 +317,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                         <p className="text-xs text-muted-foreground">
                           {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." :
                            f.includes("Cypress") ? "Developer-friendly, all-in-one testing framework." :
+                           f.includes("C#") ? "Enterprise-grade automation for the .NET ecosystem." :
                            "The industry standard for web automation."}
                         </p>
                       </button>
@@ -712,7 +716,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
           </div>
           <h4 className="font-bold text-lg">Framework Specific</h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Tailored instructions for Java, Python, JavaScript, and modern tools like Playwright, Cypress, or Selenide.
+            Tailored instructions for Java, Python, JavaScript, C#, and modern tools like Playwright, Cypress, or Selenide.
           </p>
         </div>
         <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-slate-900 border shadow-sm">
