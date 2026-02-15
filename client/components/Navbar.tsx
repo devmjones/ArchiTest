@@ -15,7 +15,7 @@ export function Navbar() {
         <Link to="/" className="flex items-center gap-2 group transition-all">
           <div className="relative w-12 h-12 flex items-center justify-center transition-all">
             <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F639baa98c2974995863e87502945121e?format=webp&width=120&height=120"
+              src="https://cdn.builder.io/api/v1/image/assets%2F45fc8b145c8c4f1f8f8dc09089e84ecd%2F210a468b58d842d1bcbf539f39fecf89?format=webp&width=120&height=120"
               alt="ArchiTest Logo"
               className="w-full h-full object-contain"
             />
