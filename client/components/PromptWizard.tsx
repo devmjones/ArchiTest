@@ -171,7 +171,7 @@ ${framework.includes("Java") ? `- **Test Runner**: ${testRunner}` : ""}
 ${description ? `**Description**: ${description}` : ""}
 
 ### Steps to Automate:
-${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Assert: ${s.expected})` : ""}`).join("\n")}
+${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Assertion: ${s.expected})` : ""}`).join("\n")}
 
 ${selectors.length > 0 ? `### Element Selectors Reference:
 | Element Name | Selector |
