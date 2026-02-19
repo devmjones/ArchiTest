@@ -45,6 +45,149 @@ interface Selector {
   selector: string;
 }
 
+/**
+ * Pre-configured example scenarios for each framework option.
+ * These are used to populate the wizard with a "finished" example.
+ */
+const DEMO_SCENARIOS: Record<Framework, any> = {
+  "Playwright JavaScript": {
+    url: "https://demo.playwright.dev/todomvc",
+    testName: "Standard Todo Management",
+    description: "Verify that a user can add, toggle, and clear todos from the list.",
+    steps: [
+      { id: "1", action: "Navigate to the TodoMVC page", expected: "Header 'todos' is visible" },
+      { id: "2", action: "Add 'Buy Milk' to the list", expected: "List contains 1 item" },
+      { id: "3", action: "Toggle the checkbox for 'Buy Milk'", expected: "Item is marked as completed" }
+    ],
+    selectors: [
+      { id: "s1", name: "newTodo", selector: ".new-todo" },
+      { id: "s2", name: "todoItems", selector: ".todo-list li" }
+    ],
+    codingStandards: "Use modern async/await and Playwright's expect assertions with locators."
+  },
+  "Playwright Python": {
+    url: "https://saucedemo.com",
+    testName: "End-to-End E-commerce Checkout",
+    description: "Login as a standard user, add a product to the cart, and complete the checkout process.",
+    steps: [
+      { id: "1", action: "Login with 'standard_user' and 'secret_sauce'", expected: "Product page is visible" },
+      { id: "2", action: "Add 'Sauce Labs Backpack' to the cart", expected: "Cart badge shows '1'" },
+      { id: "3", action: "Go to checkout and finish order", expected: "Thank you message is displayed" }
+    ],
+    selectors: [
+      { id: "s1", name: "userField", selector: "#user-name" },
+      { id: "s2", name: "passField", selector: "#password" },
+      { id: "s3", name: "loginBtn", selector: "#login-button" }
+    ],
+    codingStandards: "Follow PEP 8, use the Page Object Model, and utilize Playwright's built-in auto-waiting."
+  },
+  "Playwright Java": {
+    url: "https://github.com/login",
+    testName: "GitHub Login Validation",
+    description: "Verify that the login form handles invalid credentials correctly.",
+    steps: [
+      { id: "1", action: "Navigate to login page", expected: "Sign in form is present" },
+      { id: "2", action: "Enter invalid email and password", expected: "Error message 'Incorrect username or password' appears" }
+    ],
+    selectors: [
+      { id: "s1", name: "loginInput", selector: "#login_field" },
+      { id: "s2", name: "passwordInput", selector: "#password" },
+      { id: "s3", name: "errorFlash", selector: ".flash-error" }
+    ],
+    codingStandards: "Use JUnit 5, follow Java naming conventions, and implement a robust Page Object Model."
+  },
+  "Cypress JavaScript": {
+    url: "https://example.cypress.io/commands/actions",
+    testName: "UI Actions & Interactions",
+    description: "Test various user actions like typing, clearing, and submitting a form.",
+    steps: [
+      { id: "1", action: "Type 'Hello World' into the email input", expected: "Input value matches 'Hello World'" },
+      { id: "2", action: "Clear the input field", expected: "Input is empty" },
+      { id: "3", action: "Click the action button", expected: "Verification message appears" }
+    ],
+    selectors: [
+      { id: "s1", name: "emailField", selector: ".action-email" },
+      { id: "s2", name: "actionBtn", selector: ".action-btn" }
+    ],
+    codingStandards: "Use Cypress custom commands where applicable and prioritize data-cy selectors."
+  },
+  "Selenium JavaScript": {
+    url: "https://www.google.com",
+    testName: "Google Search Functionality",
+    description: "Perform a search query and verify that results are displayed.",
+    steps: [
+      { id: "1", action: "Accept cookie consent if visible", expected: "Consent dialog is gone" },
+      { id: "2", action: "Type 'ArchiTest' into the search bar", expected: "Search suggestions appear" },
+      { id: "3", action: "Press Enter", expected: "Results page contains 'ArchiTest'" }
+    ],
+    selectors: [
+      { id: "s1", name: "searchBar", selector: "textarea[name='q']" },
+      { id: "s2", name: "resultsContainer", selector: "#search" }
+    ],
+    codingStandards: "Use Selenium WebDriver with async/await and the official javascript bindings."
+  },
+  "Selenium Python": {
+    url: "https://the-internet.herokuapp.com/login",
+    testName: "Form Authentication Test",
+    description: "Standard login test using a secure demo application.",
+    steps: [
+      { id: "1", action: "Enter 'tomsmith' as username", expected: "Username field contains text" },
+      { id: "2", action: "Enter 'SuperSecretPassword!' as password", expected: "Password field contains text" },
+      { id: "3", action: "Click Login button", expected: "Flash message 'You logged into a secure area!' is visible" }
+    ],
+    selectors: [
+      { id: "s1", name: "username", selector: "#username" },
+      { id: "s2", name: "password", selector: "#password" },
+      { id: "s3", name: "loginBtn", selector: "button[type='submit']" }
+    ],
+    codingStandards: "Use pytest framework, webdriver_manager for driver setup, and explicit waits."
+  },
+  "Selenium C#": {
+    url: "https://demoqa.com/text-box",
+    testName: "Text Box Form Submission",
+    description: "Verify that a complex form can be filled and submitted correctly.",
+    steps: [
+      { id: "1", action: "Enter Full Name, Email, and Address", expected: "Fields are populated" },
+      { id: "2", action: "Click Submit", expected: "Output area displays the submitted data" }
+    ],
+    selectors: [
+      { id: "s1", name: "fullName", selector: "#userName" },
+      { id: "s2", name: "submitBtn", selector: "#submit" },
+      { id: "s3", name: "output", selector: "#output" }
+    ],
+    codingStandards: "Use NUnit or xUnit, follow C# PascalCase naming conventions, and implement POM."
+  },
+  "Selenium Java": {
+    url: "https://opensource-demo.orangehrmlive.com/",
+    testName: "Admin Dashboard Navigation",
+    description: "Login and navigate through the admin panel of an HRM system.",
+    steps: [
+      { id: "1", action: "Login with admin credentials", expected: "Dashboard is shown" },
+      { id: "2", action: "Click on 'Admin' tab", expected: "User Management header is visible" },
+      { id: "3", action: "Search for a specific user", expected: "Search result matches query" }
+    ],
+    selectors: [
+      { id: "s1", name: "username", selector: "input[name='username']" },
+      { id: "s2", name: "adminTab", selector: ".oxd-main-menu-item:contains('Admin')" }
+    ],
+    codingStandards: "Use TestNG or JUnit 5, Maven/Gradle for dependencies, and Selenium 4 features."
+  },
+  "Selenide Java": {
+    url: "https://duckduckgo.com",
+    testName: "Privacy-Focused Search Test",
+    description: "Verify search results on DuckDuckGo using Selenide's concise syntax.",
+    steps: [
+      { id: "1", action: "Type 'Selenide vs Selenium' in search input", expected: "Input field is not empty" },
+      { id: "2", action: "Click search icon", expected: "First result title contains 'Selenide'" }
+    ],
+    selectors: [
+      { id: "s1", name: "searchBox", selector: "#searchbox_input" },
+      { id: "s2", name: "searchBtn", selector: "button[type='submit']" }
+    ],
+    codingStandards: "Leverage Selenide's concise API ($ instead of findElement) and automatic waiting."
+  }
+};
+
 export function PromptWizard() {
   // Wizard flow state
   const [step, setStep] = useState(1);
@@ -236,6 +379,27 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   /**
+   * Loads a complete demo scenario based on the selected framework.
+   */
+  const loadDemo = (f: Framework) => {
+    const demo = DEMO_SCENARIOS[f];
+    if (demo) {
+      setFramework(f);
+      setUrl(demo.url);
+      setTestName(demo.testName);
+      setDescription(demo.description);
+      setTestSteps(demo.steps);
+      setSelectors(demo.selectors);
+      setCodingStandards(demo.codingStandards);
+
+      toast({
+        title: "Demo Scenario Loaded",
+        description: `Successfully loaded a finished example for ${f}.`,
+      });
+    }
+  };
+
+  /**
    * Handles file uploads for selectors and test data by reading the file as text.
    */
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "selectors" | "data") => {
@@ -368,12 +532,23 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                           {f}
                           {framework === f && <div className="w-2 h-2 rounded-full bg-primary" />}
                         </div>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground mb-3">
                           {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." :
                            f.includes("Cypress") ? "Developer-friendly, all-in-one testing framework." :
                            f.includes("C#") ? "Enterprise-grade automation for the .NET ecosystem." :
                            "The industry standard for web automation."}
                         </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            loadDemo(f as Framework);
+                          }}
+                          className="w-full h-8 text-[10px] uppercase font-bold tracking-widest gap-1.5 border-primary/20 hover:bg-primary/10 hover:text-primary rounded-lg transition-all"
+                        >
+                          <Sparkles size={12} /> Load Demo Prompt
+                        </Button>
                       </button>
                     ))}
                   </div>
