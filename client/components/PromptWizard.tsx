@@ -36,6 +36,15 @@ interface TestStep {
   expected: string;
 }
 
+/**
+ * Structure for a single element selector in the mapping table.
+ */
+interface Selector {
+  id: string;
+  name: string;
+  selector: string;
+}
+
 export function PromptWizard() {
   // Wizard flow state
   const [step, setStep] = useState(1);
@@ -61,7 +70,9 @@ export function PromptWizard() {
   const [isBDD, setIsBDD] = useState(false);
   const [testRunner, setTestRunner] = useState("JUnit 5");
   const [codingStandards, setCodingStandards] = useState("Use descriptive variable names and clear assertions.");
-  const [selectors, setSelectors] = useState("");
+  const [selectors, setSelectors] = useState<Selector[]>([
+    { id: "1", name: "loginBtn", selector: "#login-button" },
+  ]);
   const [testData, setTestData] = useState("");
 
   // UI state
@@ -123,6 +134,20 @@ export function PromptWizard() {
     setTestSteps(testSteps.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
   };
 
+  const addSelector = () => {
+    setSelectors([...selectors, { id: Math.random().toString(36).substr(2, 9), name: "", selector: "" }]);
+  };
+
+  const removeSelector = (id: string) => {
+    if (selectors.length > 0) {
+      setSelectors(selectors.filter((s) => s.id !== id));
+    }
+  };
+
+  const updateSelector = (id: string, field: keyof Selector, value: string) => {
+    setSelectors(selectors.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
+  };
+
   /**
    * Compiles all user inputs into a structured Markdown prompt for an LLM.
    */
@@ -148,10 +173,10 @@ ${description ? `**Description**: ${description}` : ""}
 ### Steps to Automate:
 ${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Assert: ${s.expected})` : ""}`).join("\n")}
 
-${selectors ? `### Element Selectors Reference:
-\`\`\`json
-${selectors}
-\`\`\`
+${selectors.length > 0 ? `### Element Selectors Reference:
+| Element Name | Selector |
+|--------------|----------|
+${selectors.map(s => `| ${s.name || "N/A"} | ${s.selector || "N/A"} |`).join("\n")}
 ` : ""}
 
 ${testData ? `### Test Data:
@@ -191,7 +216,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     setTestName("");
     setDescription("");
     setTestSteps([{ id: "1", action: "Navigate to the home page", expected: "" }]);
-    setSelectors("");
+    setSelectors([{ id: "1", name: "loginBtn", selector: "#login-button" }]);
     setTestData("");
     setBrowser("Chromium");
     setViewport("Desktop (1280x720)");
@@ -220,8 +245,35 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
-      if (type === "selectors") setSelectors(content);
-      else setTestData(content);
+      if (type === "selectors") {
+        try {
+          // Try to parse as JSON if it's a selector upload
+          const parsed = JSON.parse(content);
+          if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+            const newSelectors = Object.entries(parsed).map(([name, selector]) => ({
+              id: Math.random().toString(36).substr(2, 9),
+              name: String(name),
+              selector: String(selector)
+            }));
+            setSelectors(newSelectors);
+          } else if (Array.isArray(parsed)) {
+            setSelectors(parsed.map(s => ({
+              id: s.id || Math.random().toString(36).substr(2, 9),
+              name: s.name || "",
+              selector: s.selector || ""
+            })));
+          }
+        } catch (e) {
+          // If not JSON, just add a blank row (manual fallback)
+          toast({
+            title: "Format Error",
+            description: "Could not parse selector file as JSON. Switching to manual input.",
+            variant: "destructive"
+          });
+        }
+      } else {
+        setTestData(content);
+      }
       toast({
         title: "File Uploaded",
         description: `${file.name} has been processed successfully.`,
@@ -480,34 +532,76 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                     </TabsList>
                     <TabsContent value="selectors" className="space-y-4 animate-in fade-in slide-in-from-left-2 duration-300">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="selectors">Element Selectors (JSON/Text)</Label>
-                        <div className="relative">
-                          <input
-                            type="file"
-                            id="selector-upload"
-                            className="hidden"
-                            onChange={(e) => handleFileUpload(e, "selectors")}
-                            accept=".json,.txt,.csv"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 gap-2 rounded-full"
-                            onClick={() => document.getElementById('selector-upload')?.click()}
-                          >
-                            <Upload size={14} /> Upload File
+                        <Label htmlFor="selectors">Element Selector Map</Label>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={addSelector} className="h-8 gap-1 rounded-full px-3">
+                            <Plus size={14} /> Add Selector
                           </Button>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              id="selector-upload"
+                              className="hidden"
+                              onChange={(e) => handleFileUpload(e, "selectors")}
+                              accept=".json,.txt,.csv"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 gap-2 rounded-full"
+                              onClick={() => document.getElementById('selector-upload')?.click()}
+                            >
+                              <Upload size={14} /> Upload JSON
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <Textarea
-                        id="selectors"
-                        placeholder='{ "loginBtn": "#login", "userField": "input[name=\"user\"]" }'
-                        value={selectors}
-                        onChange={(e) => setSelectors(e.target.value)}
-                        className="min-h-[250px] font-mono text-sm rounded-lg resize-none bg-slate-50/50 dark:bg-slate-900"
-                      />
+
+                      <ScrollArea className="h-[250px] pr-4">
+                        <div className="space-y-3 pb-4">
+                          <div className="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold text-muted-foreground px-4">
+                            <div className="col-span-4">Element Name</div>
+                            <div className="col-span-7">Selector (CSS/XPath)</div>
+                            <div className="col-span-1"></div>
+                          </div>
+                          {selectors.map((s) => (
+                            <div key={s.id} className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 group">
+                              <div className="col-span-4">
+                                <Input
+                                  placeholder="loginBtn"
+                                  value={s.name}
+                                  onChange={(e) => updateSelector(s.id, "name", e.target.value)}
+                                  className="border-none bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-1 h-8 text-xs"
+                                />
+                              </div>
+                              <div className="col-span-7">
+                                <Input
+                                  placeholder="#login"
+                                  value={s.selector}
+                                  onChange={(e) => updateSelector(s.id, "selector", e.target.value)}
+                                  className="border-none bg-primary/5 focus-visible:ring-1 h-8 text-xs font-mono"
+                                />
+                              </div>
+                              <div className="col-span-1 flex justify-end">
+                                <button
+                                  onClick={() => removeSelector(s.id)}
+                                  className="p-1 rounded-full text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                          {selectors.length === 0 && (
+                            <div className="text-center py-8 text-muted-foreground text-xs italic">
+                              No selectors added. Click "Add Selector" or upload a JSON file.
+                            </div>
+                          )}
+                        </div>
+                      </ScrollArea>
+
                       <p className="text-[10px] text-muted-foreground italic">
-                        Tip: Paste your existing selector map or JSON exported from your dev tools.
+                        Tip: Map descriptive names to their technical selectors. These will be used by the AI to write more accurate tests.
                       </p>
                     </TabsContent>
                     <TabsContent value="data" className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
