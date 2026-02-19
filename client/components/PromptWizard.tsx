@@ -33,7 +33,7 @@ type Framework =
 interface TestStep {
   id: string;
   action: string;
-  expected?: string;
+  expected: string;
 }
 
 export function PromptWizard() {
@@ -48,7 +48,7 @@ export function PromptWizard() {
 
   // Test scenario steps state
   const [testSteps, setTestSteps] = useState<TestStep[]>([
-    { id: "1", action: "Navigate to the home page" },
+    { id: "1", action: "Navigate to the home page", expected: "" },
   ]);
 
   // Environment & Browser state
@@ -110,7 +110,7 @@ export function PromptWizard() {
   };
 
   const addStep = () => {
-    setTestSteps([...testSteps, { id: Math.random().toString(36).substr(2, 9), action: "" }]);
+    setTestSteps([...testSteps, { id: Math.random().toString(36).substr(2, 9), action: "", expected: "" }]);
   };
 
   const removeStep = (id: string) => {
@@ -190,14 +190,16 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     setUrl("");
     setTestName("");
     setDescription("");
-    setTestSteps([{ id: "1", action: "Navigate to the home page" }]);
+    setTestSteps([{ id: "1", action: "Navigate to the home page", expected: "" }]);
     setSelectors("");
     setTestData("");
     setBrowser("Chromium");
     setViewport("Desktop (1280x720)");
     setNetwork("No Throttling");
     setIsBDD(false);
+    setUsePageObjects(true);
     setTestRunner("JUnit 5");
+    setCodingStandards("Use descriptive variable names and clear assertions.");
     setStep(1);
     toast({
       title: "Wizard Reset",
@@ -446,7 +448,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                               <span className="text-[10px] uppercase font-bold text-muted-foreground text-primary">Verification (Optional)</span>
                               <Input
                                 placeholder="e.g. Verify 'Dashboard' is visible"
-                                value={s.expected}
+                                value={s.expected || ""}
                                 onChange={(e) => updateStep(s.id, "expected", e.target.value)}
                                 className="border-none bg-primary/5 focus-visible:ring-1 h-9"
                               />
