@@ -519,12 +519,12 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                       "Selenium Java",
                       "Selenide Java",
                     ].map((f) => (
-                      <button
+                      <div
                         key={f}
                         onClick={() => setFramework(f as Framework)}
-                        className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 group ${
-                          framework === f 
-                            ? "border-primary bg-primary/5 ring-4 ring-primary/10" 
+                        className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 cursor-pointer group ${
+                          framework === f
+                            ? "border-primary bg-primary/5 ring-4 ring-primary/10"
                             : "border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900"
                         }`}
                       >
@@ -549,7 +549,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                         >
                           <Sparkles size={12} /> Load Demo Prompt
                         </Button>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>
