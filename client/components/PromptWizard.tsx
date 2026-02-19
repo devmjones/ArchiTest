@@ -146,7 +146,7 @@ ${framework.includes("Java") ? `- **Test Runner**: ${testRunner}` : ""}
 ${description ? `**Description**: ${description}` : ""}
 
 ### Steps to Automate:
-${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Verify: ${s.expected})` : ""}`).join("\n")}
+${testSteps.map((s, idx) => `${idx + 1}. ${s.action}${s.expected ? ` (Assert: ${s.expected})` : ""}`).join("\n")}
 
 ${selectors ? `### Element Selectors Reference:
 \`\`\`json
@@ -445,9 +445,9 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                               />
                             </div>
                             <div className="space-y-1">
-                              <span className="text-[10px] uppercase font-bold text-muted-foreground text-primary">Verification (Optional)</span>
+                              <span className="text-[10px] uppercase font-bold text-muted-foreground text-primary">Assertion (Optional)</span>
                               <Input
-                                placeholder="e.g. Verify 'Dashboard' is visible"
+                                placeholder="e.g. Assert 'Dashboard' is visible"
                                 value={s.expected || ""}
                                 onChange={(e) => updateStep(s.id, "expected", e.target.value)}
                                 className="border-none bg-primary/5 focus-visible:ring-1 h-9"

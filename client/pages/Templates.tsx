@@ -32,8 +32,8 @@ const TEMPLATES: Template[] = [
       "Navigate to /login",
       "Enter valid username and password",
       "Click the 'Sign In' button",
-      "Verify the 'Dashboard' header is visible",
-      "Verify the URL contains '/dashboard'"
+      "Assert the 'Dashboard' header is visible",
+      "Assert the URL contains '/dashboard'"
     ],
     selectors: JSON.stringify({
       userInput: "#username",
@@ -53,7 +53,7 @@ const TEMPLATES: Template[] = [
       "Select the first product result",
       "Click 'Add to Cart'",
       "Open the cart drawer",
-      "Verify product price and quantity",
+      "Assert product price and quantity",
       "Click 'Proceed to Checkout'"
     ],
     selectors: JSON.stringify({
@@ -74,7 +74,7 @@ const TEMPLATES: Template[] = [
       "Update display name and bio",
       "Upload a new profile picture placeholder",
       "Save changes",
-      "Refresh page and verify updated data"
+      "Refresh page and assert updated data"
     ],
     selectors: JSON.stringify({
       nameField: "#display-name",
