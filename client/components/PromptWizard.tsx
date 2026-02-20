@@ -532,12 +532,6 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                           {f}
                           {framework === f && <div className="w-2 h-2 rounded-full bg-primary" />}
                         </div>
-                        <p className="text-xs text-muted-foreground mb-3">
-                          {f.includes("Playwright") ? "Modern, fast, and reliable end-to-end testing." :
-                           f.includes("Cypress") ? "Developer-friendly, all-in-one testing framework." :
-                           f.includes("C#") ? "Enterprise-grade automation for the .NET ecosystem." :
-                           "The industry standard for web automation."}
-                        </p>
                         <Button
                           variant="ghost"
                           size="sm"
