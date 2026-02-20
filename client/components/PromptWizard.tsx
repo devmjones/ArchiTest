@@ -197,6 +197,7 @@ export function PromptWizard() {
   const [url, setUrl] = useState("");
   const [testName, setTestName] = useState("");
   const [description, setDescription] = useState("");
+  const [isExistingCodebase, setIsExistingCodebase] = useState(true);
 
   // Test scenario steps state
   const [testSteps, setTestSteps] = useState<TestStep[]>([
@@ -303,6 +304,7 @@ export function PromptWizard() {
 - **Page Object Model**: ${usePageObjects ? "Yes, please follow POM pattern" : "No, keep it simple"}
 - **BDD/Gherkin Support**: ${isBDD ? "Yes, generate a Gherkin .feature file and step definitions" : "No"}
 ${framework.includes("Java") ? `- **Test Runner**: ${testRunner}` : ""}
+- **Target Environment**: ${isExistingCodebase ? "Integrating into an existing codebase" : "Starting a new standalone project"}
 - **Coding Standards**: ${codingStandards}
 
 ## Environment & Browser Configuration
@@ -338,6 +340,12 @@ ${testData}
 4. Provide clean, well-commented code.
 ${framework.includes("Playwright") ? "5. Utilize built-in auto-waiting features." : ""}
 ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and auto-retry logic." : ""}
+
+${!isExistingCodebase ? `## Standalone Project Instructions:
+1. Create a detailed README.md file.
+2. Include clear, step-by-step setup and installation instructions.
+3. Document how to download dependencies and run the tests.
+4. Include any necessary environment configuration details.` : ""}
 `;
   };
 
@@ -358,6 +366,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
     setUrl("");
     setTestName("");
     setDescription("");
+    setIsExistingCodebase(true);
     setTestSteps([{ id: "1", action: "Navigate to the home page", expected: "" }]);
     setSelectors([{ id: "1", name: "loginBtn", selector: "#login-button" }]);
     setTestData("");
@@ -388,6 +397,7 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
       setUrl(demo.url);
       setTestName(demo.testName);
       setDescription(demo.description);
+      setIsExistingCodebase(true);
       setTestSteps(demo.steps);
       setSelectors(demo.selectors);
       setCodingStandards(demo.codingStandards);
@@ -545,6 +555,36 @@ ${framework.includes("Cypress") ? "5. Utilize Cypress's built-in assertions and 
                         </Button>
                       </div>
                     ))}
+                  </div>
+
+                  <Separator className="my-6" />
+
+                  <div className="space-y-4">
+                    <Label>Will this test be added to an existing codebase?</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        onClick={() => setIsExistingCodebase(true)}
+                        className={`p-4 rounded-xl border-2 text-center transition-all ${
+                          isExistingCodebase
+                            ? "border-primary bg-primary/5 ring-4 ring-primary/10"
+                            : "border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900"
+                        }`}
+                      >
+                        <div className="font-bold">Yes</div>
+                        <p className="text-[10px] text-muted-foreground">Adding to existing project</p>
+                      </button>
+                      <button
+                        onClick={() => setIsExistingCodebase(false)}
+                        className={`p-4 rounded-xl border-2 text-center transition-all ${
+                          !isExistingCodebase
+                            ? "border-primary bg-primary/5 ring-4 ring-primary/10"
+                            : "border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900"
+                        }`}
+                      >
+                        <div className="font-bold">No</div>
+                        <p className="text-[10px] text-muted-foreground">Start a new project</p>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
